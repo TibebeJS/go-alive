@@ -1,0 +1,26 @@
+general:
+  cron: "* * * * *"
+targets:
+  - name: Test Server
+    ip: "127.0.0.1"
+    port: 6550
+    strategy: port
+    notify:
+      - name: tibebe
+        errorTemplate: ""
+        successTemplate: ""
+      - "shoa-group"
+notifications:
+  telegram:
+    - name: "tibebe"
+      bottoken: "12345678:BotToken"
+      chatid: -123456789
+      errorTemplate: ""
+      successTemplate: ""
+  webhook:
+    - name: "webhook api"
+      endpoint: "http://localhost:8000"
+      auth:
+        endpoint: "http://localhost:7000"
+        email: "test@gmail.com"
+        password: "password"
