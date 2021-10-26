@@ -1,8 +1,7 @@
-general:
-  cron: "* * * * *"
 targets:
   - name: "Test Server"
     ip: "127.0.0.1"
+    cron: "* * * * *"
     ports:
       - port: 8000
         strategy: port
