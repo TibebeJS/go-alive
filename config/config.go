@@ -1,7 +1,6 @@
 package config
 
 type Configurations struct {
-	General       GeneralConfigurations
 	Targets       []TargetConfigurations
 	Notifications NotificationConfigurations
 }
@@ -11,16 +10,17 @@ type GeneralConfigurations struct {
 }
 
 type TargetConfigurations struct {
-	Name   string
-	Ip     string
-	Port   int
-	Notify []struct {
-		Name            string
-		ErrorTemplate   string
-		SuccessTemplate string
-	}
+	Name  string
+	Ip    string
+	Cron  string
+	Ports []PortConfigurations
 }
 
+type PortConfigurations struct {
+	Port     string
+	Strategy string
+	Notify   []interface{}
+}
 type TelegramConfigurations struct {
 	Name            string
 	Token           string
@@ -30,8 +30,8 @@ type TelegramConfigurations struct {
 }
 
 type NotificationConfigurations struct {
-	Telegram TelegramConfigurations
-	Webhook  WebHookConfigurations
+	Telegram []TelegramConfigurations
+	Webhook  []WebHookConfigurations
 }
 
 type WebHookConfigurations struct {
