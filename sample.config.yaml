@@ -1,22 +1,47 @@
 general:
   cron: "* * * * *"
 targets:
-  - name: Test Server
+  - name: "Test Server"
     ip: "127.0.0.1"
-    port: 6550
-    strategy: port
-    notify:
-      - name: tibebe
-        errorTemplate: ""
-        successTemplate: ""
-      - "shoa-group"
+    ports:
+      - port: 8000
+        strategy: port
+        notify:
+          - via: telegram
+            chat: tibebe
+            from: bot
+            errorTemplate: ""
+            successTemplate: ""
+          - via: email
+            email: tibebe@gmail.com
+            from: bot
+            errorTemplate: ""
+            successTemplate: ""
+    errorTemplate: ""
+    successTemplate: ""
+    rules:
+      - failed: ">3"
+        notify:
+        - via: telegram
+          chat: tibebe
+          from: bot
+          errorTemplate: ""
+          successTemplate: ""
+        - via: email
+          email: tibebe@gmail.com
+          from: bot
+          errorTemplate: ""
+          successTemplate: ""
 notifications:
   telegram:
-    - name: "tibebe"
-      bottoken: "12345678:BotToken"
-      chatid: -123456789
-      errorTemplate: ""
-      successTemplate: ""
+    bots:
+      - name: "bot"
+        token: "123456:bottoken"
+    chats:
+      - name: "tibebe"
+        chatid: -123456789
+      - name: "tibebe"
+        chatid: -123456789
   webhook:
     - name: "webhook api"
       endpoint: "http://localhost:8000"
