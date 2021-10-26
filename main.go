@@ -1,14 +1,15 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
 
 	c "github.com/TibebeJS/go-alive/config"
-	pingStrategy "github.com/TibebeJS/go-alive/strategies/ping"
-	telnetStrategy "github.com/TibebeJS/go-alive/strategies/telnet"
+	s "github.com/TibebeJS/go-alive/strategies"
+	"github.com/TibebeJS/go-alive/utils"
 	"github.com/mitchellh/mapstructure"
 	"github.com/robfig/cron"
 	"github.com/spf13/cobra"
@@ -20,21 +21,18 @@ type PortConfigurationsStrategyCheck struct {
 
 type HealthCheckStrategyChooser struct{}
 
-func (runner *HealthCheckStrategyChooser) Parse(configuration c.TargetConfigurations) {
+func (runner *HealthCheckStrategyChooser) Parse(configuration c.TargetConfigurations) (s.Strategy, error) {
 
 	var portConfigurationsStrategyCheck PortConfigurationsStrategyCheck
 	mapstructure.Decode(configuration, &portConfigurationsStrategyCheck)
 
 	switch portConfigurationsStrategyCheck.Strategy {
 	case "ping":
-		pingStrategy.Run(configuration)
-		fmt.Println("ping strategy")
-
+		return s.PingStrategy{}, nil
 	case "telnet":
-		telnetStrategy.Run(configuration)
-		fmt.Println("telnet strategy")
+		return s.TelnetStrategy{}, nil
 	default:
-		fmt.Println("unknown strategy")
+		return nil, errors.New("unknown strategy")
 
 	}
 
@@ -47,7 +45,11 @@ func RunHealthCheck(targetConfig c.TargetConfigurations, notificationConfigs c.N
 
 			healthCheckerRunner := HealthCheckStrategyChooser{}
 
-			healthCheckerRunner.Parse(targetConfig)
+			strategy, err := healthCheckerRunner.Parse(targetConfig)
+
+			utils.Check(err)
+
+			healthCheckResult := strategy.Run(targetConfig)
 
 			for _, notificationReceiver := range portToScan.Notify {
 
@@ -56,10 +58,10 @@ func RunHealthCheck(targetConfig c.TargetConfigurations, notificationConfigs c.N
 
 				switch notificationStrategyConfig.Via {
 				case "telegram":
-					fmt.Println("telegram notification")
+					fmt.Println("telegram notification", healthCheckResult.NumberOfUnreachableServices)
 
 				case "email":
-					fmt.Println("email notification")
+					fmt.Println("email notification", healthCheckResult.NumberOfUnreachableServices)
 				default:
 					fmt.Println("unknown strategy")
 
