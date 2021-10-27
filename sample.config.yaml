@@ -19,7 +19,7 @@ targets:
     errorTemplate: ""
     successTemplate: ""
     rules:
-      - failed: ">3"
+      - failures: ">3"
         notify:
         - via: telegram
           chat: tibebe

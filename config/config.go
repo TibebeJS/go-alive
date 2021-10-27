@@ -16,6 +16,12 @@ type TargetConfigurations struct {
 	Cron     string
 	Ports    []PortConfigurations
 	Strategy string
+	Rules    []RuleConfiguration
+}
+
+type RuleConfiguration struct {
+	Failures string
+	Notify   []interface{}
 }
 
 type PortConfigurations struct {
@@ -24,15 +30,22 @@ type PortConfigurations struct {
 }
 
 type TelegramConfigurations struct {
-	Name            string
-	Token           string
-	ChatId          string
-	ErrorTemplate   string
-	SuccessTemplate string
+	Bots             []TelegramBotConfiguration
+	Chats            []TelegramChatConfiguration
+	TelegramBotsMap  map[string]TelegramBotConfiguration
+	TelegramChatsMap map[string]TelegramChatConfiguration
+}
+type TelegramBotConfiguration struct {
+	Name  string
+	Token string
 }
 
+type TelegramChatConfiguration struct {
+	Name   string
+	ChatId int64
+}
 type NotificationConfigurations struct {
-	Telegram []TelegramConfigurations
+	Telegram TelegramConfigurations
 	Webhook  []WebHookConfigurations
 }
 
@@ -47,6 +60,14 @@ type WebHookAuthConfigurations struct {
 	Email    string
 	Password string
 	Field    string
+}
+
+type TelegramNotificationConfig struct {
+	Via             string
+	Chat            string
+	From            string
+	ErrorTemplate   string
+	SuccessTemplate string
 }
 
 type NotificationStrategyConfig struct{ Via string }
