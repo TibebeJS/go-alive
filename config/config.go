@@ -15,6 +15,7 @@ type TargetConfigurations struct {
 	Ip       string
 	Cron     string
 	Ports    []PortConfigurations
+	Https    bool
 	Strategy string
 	Rules    []RuleConfiguration
 }
