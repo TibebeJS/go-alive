@@ -8,7 +8,7 @@ Robust services healthiness probing written in Go. (with notification support of
 
 Please follow the steps below to get started quick
 
-## Installation ##
+## Using as a CLI tool (using the go binary directly) ##
 
 If you are using Go 1.17+, run the following:
 ```
@@ -18,6 +18,25 @@ $ go install github.com/TibebeJs/go-alive@latest
 If you are using an older version of golang,
 ```
 $ GO111MODULE=on go get github.com/TibebeJs/go-alive@latest
+```
+## Using Docker ##
+
+### Alternative 1: Building the Image locally
+Clone the source code repository first:
+
+```
+$ git@github.com:TibebeJS/go-alive.git && cd go-alive
+```
+
+Then build the Docker Image (with [Docker BuildKit](https://docs.docker.com/develop/develop-images/build_enhancements/#to-enable-buildkit-builds) enabled):
+
+```
+$ DOCKER_BUILDKIT=1 docker build . -t go-alive
+```
+
+Finally mount a folder where your `config.yml` file resides at as `/config` and run the image:
+```
+$ docker run -v $(pwd):/config go-alive
 ```
 
 ## Bugs ##

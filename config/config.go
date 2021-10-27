@@ -81,6 +81,7 @@ func LoadConfig(configPath string) Configurations {
 
 	viper.AddConfigPath(".")
 	viper.AddConfigPath("/")
+	viper.AddConfigPath("/config")
 
 	var configuration Configurations
 
