@@ -1,67 +1,71 @@
 package main
 
 import (
+	"errors"
 	"fmt"
-	"log"
 	"os"
 	"os/signal"
+	"syscall"
 
 	c "github.com/TibebeJS/go-alive/config"
+	s "github.com/TibebeJS/go-alive/strategies"
+	"github.com/TibebeJS/go-alive/utils"
 	"github.com/mitchellh/mapstructure"
 	"github.com/robfig/cron"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
-func Check(err error) {
-	if err != nil {
-		log.Fatalln(err.Error())
+type PortConfigurationsStrategyCheck struct {
+	Strategy string
+}
+
+type HealthCheckStrategyChooser struct{}
+
+func (runner *HealthCheckStrategyChooser) Parse(configuration c.TargetConfigurations) (s.Strategy, error) {
+
+	var portConfigurationsStrategyCheck PortConfigurationsStrategyCheck
+	mapstructure.Decode(configuration, &portConfigurationsStrategyCheck)
+
+	switch portConfigurationsStrategyCheck.Strategy {
+	case "ping":
+		return s.PingStrategy{}, nil
+	case "telnet":
+		return s.TelnetStrategy{}, nil
+	default:
+		return nil, errors.New("unknown strategy")
+
 	}
+
 }
-
-func LoadConfig(configPath string) c.Configurations {
-	viper.SetConfigName(configPath)
-
-	viper.AutomaticEnv()
-
-	viper.SetConfigType("yml")
-
-	viper.AddConfigPath(".")
-	viper.AddConfigPath("/")
-
-	var configuration c.Configurations
-
-	Check(viper.ReadInConfig())
-
-	Check(viper.Unmarshal(&configuration))
-
-	return configuration
-}
-
-type NotificationStrategyConfig struct{ Via string }
 
 func RunHealthCheck(targetConfig c.TargetConfigurations, notificationConfigs c.NotificationConfigurations) func() {
 	return func() {
 
 		for _, portToScan := range targetConfig.Ports {
-			fmt.Println("checking => ", targetConfig.Ip, ":", portToScan.Port)
+
+			healthCheckerRunner := HealthCheckStrategyChooser{}
+
+			strategy, err := healthCheckerRunner.Parse(targetConfig)
+
+			utils.Check(err)
+
+			healthCheckResult := strategy.Run(targetConfig)
 
 			for _, notificationReceiver := range portToScan.Notify {
 
-				var notificationStrategyConfig NotificationStrategyConfig
+				var notificationStrategyConfig c.NotificationStrategyConfig
 				mapstructure.Decode(notificationReceiver, &notificationStrategyConfig)
 
 				switch notificationStrategyConfig.Via {
 				case "telegram":
-					fmt.Println("telegram notification")
+					fmt.Println("telegram notification", healthCheckResult.NumberOfUnreachableServices)
 
 				case "email":
-					fmt.Println("email notification")
+					fmt.Println("email notification", healthCheckResult.NumberOfUnreachableServices)
 				default:
 					fmt.Println("unknown strategy")
 
 				}
-
 			}
 		}
 	}
@@ -80,7 +84,7 @@ func main() {
 			if configFilePath == "" {
 				configFilePath = "./config.yml"
 			}
-			configuration := LoadConfig(configFilePath)
+			configuration := c.LoadConfig(configFilePath)
 
 			for _, target := range configuration.Targets {
 				c := cron.New()
@@ -93,10 +97,9 @@ func main() {
 
 			}
 
-			sig := make(chan os.Signal)
-			signal.Notify(sig, os.Interrupt, os.Kill)
+			sig := make(chan os.Signal, 1)
+			signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
 			<-sig
-
 			fmt.Print("Exiting...")
 		},
 	}
