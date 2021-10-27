@@ -56,6 +56,6 @@ func (t *TelegramNotifier) NotifyHealthCheckResult(result s.HealthCheckResult) e
 	//Silences the debug messages
 	bot.Debug = false
 
-	bot.Send(tgbotapi.NewMessage(t.chatConfig.ChatId, "Notification test from go-alive"))
+	bot.Send(tgbotapi.NewMessage(t.chatConfig.ChatId, fmt.Sprintf("Scan Finished Successfully.\nScanned %d ports on %s.\n%d scanned ports are down.", len(result.Results), result.Host, result.NumberOfUnreachableServices)))
 	return nil
 }
