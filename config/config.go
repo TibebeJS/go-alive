@@ -45,9 +45,34 @@ type TelegramChatConfiguration struct {
 	Name   string
 	ChatId int64
 }
+
+type EmailConfig struct {
+	SmtpConfigsMap map[string]SmtpConfiguration
+	Smtp           []SmtpConfiguration
+}
+
+type SmtpConfiguration struct {
+	Name   string
+	Sender string
+	Auth   SmtpAuthConfiguration
+	Server string
+	Port   uint64
+}
+
+type SmtpAuthConfiguration struct {
+	Username string
+	Password string
+}
+
+type EmailRecipientConfiguration struct {
+	To      string
+	Subject string
+}
+
 type NotificationConfigurations struct {
 	Telegram TelegramConfigurations
 	Webhook  []WebHookConfigurations
+	Email    EmailConfig
 }
 
 type WebHookConfigurations struct {
@@ -64,11 +89,18 @@ type WebHookAuthConfigurations struct {
 }
 
 type TelegramNotificationConfig struct {
-	Via             string
-	Chat            string
-	From            string
-	ErrorTemplate   string
-	SuccessTemplate string
+	Via      string
+	Chat     string
+	From     string
+	Template string
+}
+
+type EmailNotificationConfig struct {
+	Via      string
+	To       string
+	From     string
+	Template string
+	Subject  string
 }
 
 type NotificationStrategyConfig struct{ Via string }

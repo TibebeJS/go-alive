@@ -14,6 +14,7 @@ type HealthCheckResult struct {
 	NumberOfUnreachableServices int
 	Host                        string
 	Results                     []SpecificPortHealthCheckResult
+	Strategy                    string
 }
 
 type SpecificPortHealthCheckResult struct {
@@ -22,4 +23,5 @@ type SpecificPortHealthCheckResult struct {
 	Error       error
 	Host        string
 	Port        uint64
+	Strategy    string
 }

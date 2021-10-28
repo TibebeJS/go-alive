@@ -1,11 +1,14 @@
 package notifiers
 
 import (
+	"bytes"
 	"fmt"
 	"log"
+	"text/template"
 
 	c "github.com/TibebeJS/go-alive/config"
 	s "github.com/TibebeJS/go-alive/strategies"
+	"github.com/TibebeJS/go-alive/utils"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
@@ -21,7 +24,7 @@ func NewTelegramNotifier(botConfig c.TelegramBotConfiguration, chatConfig c.Tele
 	}
 }
 
-func (t *TelegramNotifier) NotifySpecificPortHealthCheckResult(result s.SpecificPortHealthCheckResult) error {
+func (t *TelegramNotifier) NotifySpecificPortHealthCheckResult(result s.SpecificPortHealthCheckResult, templateString string) error {
 	fmt.Println("sending message with bot token", t.botConfig.Token)
 
 	bot, err := tgbotapi.NewBotAPI(t.botConfig.Token)
@@ -32,30 +35,58 @@ func (t *TelegramNotifier) NotifySpecificPortHealthCheckResult(result s.Specific
 	//Silences the debug messages
 	bot.Debug = false
 
-	isReachable := "reachable"
+	messageTemplate := `Port Scan Result:
+Port: {{.Port}}
+Is Reachable: {{.IsReachable}}
+	`
 
-	if result.IsReachable {
-		isReachable = "is " + isReachable
-	} else {
-		isReachable = "is not " + isReachable
+	if len(templateString) > 0 {
+		messageTemplate = templateString
 	}
 
-	bot.Send(tgbotapi.NewMessage(t.chatConfig.ChatId, fmt.Sprintf("%s:%d - %s", result.Host, result.Port, isReachable)))
+	tmpl, err := template.New("test").Parse(messageTemplate)
+	if err != nil {
+		panic(err)
+	}
+
+	var tpl bytes.Buffer
+
+	err = tmpl.Execute(&tpl, result)
+	if err != nil {
+		panic(err)
+	}
+
+	bot.Send(tgbotapi.NewMessage(t.chatConfig.ChatId, tpl.String()))
 
 	return nil
 }
 
-func (t *TelegramNotifier) NotifyHealthCheckResult(result s.HealthCheckResult) error {
+func (t *TelegramNotifier) NotifyHealthCheckResult(result s.HealthCheckResult, templateString string) error {
 	fmt.Println("sending message with bot token", t.botConfig.Token)
 
 	bot, err := tgbotapi.NewBotAPI(t.botConfig.Token)
 	//Checks for errors
-	if err != nil {
-		log.Panic(err)
-	}
+	utils.Check(err)
 	//Silences the debug messages
 	bot.Debug = false
 
-	bot.Send(tgbotapi.NewMessage(t.chatConfig.ChatId, fmt.Sprintf("Scan Finished Successfully.\nScanned %d ports on %s.\n%d scanned ports are down.", len(result.Results), result.Host, result.NumberOfUnreachableServices)))
+	messageTemplate := `Scan Finished:
+Host: {{.Host}}
+Number Of Scanned Ports Down: {{.NumberOfUnreachableServices}}
+`
+
+	if len(templateString) > 0 {
+		messageTemplate = templateString
+	}
+
+	tmpl, err := template.New("test").Parse(messageTemplate)
+	utils.Check(err)
+
+	var tpl bytes.Buffer
+
+	err = tmpl.Execute(&tpl, result)
+	utils.Check(err)
+
+	bot.Send(tgbotapi.NewMessage(t.chatConfig.ChatId, tpl.String()))
 	return nil
 }
