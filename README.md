@@ -39,6 +39,18 @@ Finally mount a folder where your `config.yml` file resides at as `/config` and 
 $ docker run -v $(pwd):/config go-alive
 ```
 
+### Alternative 2: Pull the image from the Docker Hub Registry and run it
+To pull the docker image:
+
+```
+$ docker pull tibebesjs/go-alive
+```
+
+Then simplyy mount a folder where you have your `config.yml` in as `/config` and run the image:
+```
+$ docker run -v $(pwd):/config go-alive
+```
+
 ## Bugs ##
 
 Bugs or suggestions? Visit the [issue tracker](https://github.com/TibebeJS/go-alive/issues) 
