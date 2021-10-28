@@ -8,6 +8,7 @@ import (
 
 	c "github.com/TibebeJS/go-alive/config"
 	s "github.com/TibebeJS/go-alive/strategies"
+	"github.com/TibebeJS/go-alive/utils"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
@@ -65,9 +66,7 @@ func (t *TelegramNotifier) NotifyHealthCheckResult(result s.HealthCheckResult, t
 
 	bot, err := tgbotapi.NewBotAPI(t.botConfig.Token)
 	//Checks for errors
-	if err != nil {
-		log.Panic(err)
-	}
+	utils.Check(err)
 	//Silences the debug messages
 	bot.Debug = false
 
@@ -81,16 +80,12 @@ Number Of Scanned Ports Down: {{.NumberOfUnreachableServices}}
 	}
 
 	tmpl, err := template.New("test").Parse(messageTemplate)
-	if err != nil {
-		panic(err)
-	}
+	utils.Check(err)
 
 	var tpl bytes.Buffer
 
 	err = tmpl.Execute(&tpl, result)
-	if err != nil {
-		panic(err)
-	}
+	utils.Check(err)
 
 	bot.Send(tgbotapi.NewMessage(t.chatConfig.ChatId, tpl.String()))
 	return nil
