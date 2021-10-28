@@ -55,7 +55,7 @@ $ docker run -v $(pwd):/config go-alive
 
 Every operational aspects of go-alive is configured through the yaml file.
 
-```
+```yaml
 targets:                                                            # list of services to scan
   - name: "Test Server"  
     ip: "127.0.0.1"
