@@ -64,11 +64,10 @@ type WebHookAuthConfigurations struct {
 }
 
 type TelegramNotificationConfig struct {
-	Via             string
-	Chat            string
-	From            string
-	ErrorTemplate   string
-	SuccessTemplate string
+	Via      string
+	Chat     string
+	From     string
+	Template string
 }
 
 type NotificationStrategyConfig struct{ Via string }

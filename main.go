@@ -74,7 +74,7 @@ func RunHealthCheck(targetConfig c.TargetConfigurations, notificationConfigs c.N
 					}
 
 					notifier := n.NewTelegramNotifier(bot, chat)
-					notifier.NotifySpecificPortHealthCheckResult(healthCheckResult.Results[i])
+					notifier.NotifySpecificPortHealthCheckResult(healthCheckResult.Results[i], telegramNotificationConfig.Template)
 					// fmt.Println("telegram notification", telegramNotificationConfig.)
 
 				case "email":
@@ -137,7 +137,7 @@ func RunHealthCheck(targetConfig c.TargetConfigurations, notificationConfigs c.N
 						}
 
 						notifier := n.NewTelegramNotifier(bot, chat)
-						notifier.NotifyHealthCheckResult(healthCheckResult)
+						notifier.NotifyHealthCheckResult(healthCheckResult, telegramNotificationConfig.Template)
 						// fmt.Println("telegram notification", telegramNotificationConfig.)
 
 					case "email":
