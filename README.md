@@ -11,44 +11,44 @@ Please follow the steps below to get started quick
 ## Using as a CLI tool (using the go binary directly) ##
 
 If you are using Go 1.17+, run the following:
-```
-$ go install github.com/TibebeJs/go-alive@latest
+```console
+foo@bar:~$ go install github.com/TibebeJs/go-alive@latest
 ```
 
 If you are using an older version of golang,
-```
-$ GO111MODULE=on go get github.com/TibebeJs/go-alive@latest
+```console
+foo@bar:~$ GO111MODULE=on go get github.com/TibebeJs/go-alive@latest
 ```
 ## Using Docker ##
 
 ### Alternative 1: Building the Image locally
 Clone the source code repository first:
 
-```
-$ git@github.com:TibebeJS/go-alive.git && cd go-alive
+```console
+foo@bar:~$ git@github.com:TibebeJS/go-alive.git && cd go-alive
 ```
 
 Then build the Docker Image (with [Docker BuildKit](https://docs.docker.com/develop/develop-images/build_enhancements/#to-enable-buildkit-builds) enabled):
 
-```
-$ DOCKER_BUILDKIT=1 docker build . -t go-alive
+```console
+foo@bar:~$ DOCKER_BUILDKIT=1 docker build . -t go-alive
 ```
 
 Finally mount a folder where your `config.yml` file resides at as `/config` and run the image:
-```
-$ docker run -v $(pwd):/config go-alive
+```console
+foo@bar:~$ docker run -v $(pwd):/config go-alive
 ```
 
 ### Alternative 2: Pull the image from the Docker Hub Registry and run it
 To pull the docker image:
 
-```
-$ docker pull tibebesjs/go-alive
+```console
+foo@bar:~$ docker pull tibebesjs/go-alive
 ```
 
 Then simplyy mount a folder where you have your `config.yml` in as `/config` and run the image:
-```
-$ docker run -v $(pwd):/config go-alive
+```console
+foo@bar:~$ docker run -v $(pwd):/config go-alive
 ```
 
 ## Configuration ##
@@ -56,28 +56,28 @@ $ docker run -v $(pwd):/config go-alive
 Every operational aspects of go-alive is configured through the yaml file.
 
 ```yaml
-targets:                                                            # list of services to scan
+targets:                                          # list of services to scan
   - name: "Test Server"  
     ip: "127.0.0.1"
-    cron: "*/5 * * * *"                                             # scan every 5 seconds
-    strategy: status-code                                           # can be "ping", "telnet" or "status-code"
+    cron: "*/5 * * * *"                           # scan every 5 seconds
+    strategy: status-code                         # can be "ping", "telnet" or "status-code"
     https: false
-    ports:                                                          # list of ports to scan for the specified host
+    ports:                                        # list of ports to scan for the specified host
       - port: 8000
-        notify:                                                     # notification channels for the result of the specific port scan
+        notify:                                   # notification channels for the result of the specific port scan
           - via: telegram
             chat: go-alive-test-group
-            from: go-alive-test-bot                                 # defined in the notifications block
+            from: go-alive-test-bot               # defined in the notifications block
             template: ""
       - port: 8010
         notify:
-    rules:                                                          # conditional rules to check on host scan result
-      - failures: ">0"                                              # can be "<num", "num", ">num". eg. <4 (less than 4 failures)
+    rules:                                        # conditional rules to check on host scan result
+      - failures: ">0"                            # can be "<num", "num", ">num". eg. <4 (less than 4 failures)
         notify:
         - via: telegram
           chat: go-alive-test-group
           from: go-alive-test-bot
-          template: >                                               # template for telegram message (go template is supported)
+          template: >                             # template for telegram message (go template is supported)
             IP: {{.Host}}
             Scan Type: {{.Strategy}}
             Scan summary:
@@ -102,17 +102,17 @@ targets:                                                            # list of se
               {{end}}
                 ------------
             {{end}}
-notifications:
+notifications:                                      # notification channels configurations
   telegram:
-    bots:
+    bots:                                           # telegram bots to send messages from
       - name: "go-alive-test-bot"
         token: "123456:bot-token"
-    chats:
+    chats:                                          # list of telegram recipients
       - name: "go-alive-test-group"
         chatid: 1123232322
       - name: "tibebe"
         chatid: 12345678
-  email:
+  email:                                            # email configuration
     smtp:
       - name: "tibebe"
         sender: "test@gmail.com"
