@@ -11,13 +11,13 @@ Please follow the steps below to get started quick
 ## Using as a CLI tool (using the go binary directly) ##
 
 If you are using Go 1.17+, run the following:
-```console
-foo@bar:~$ go install github.com/TibebeJs/go-alive@latest
+```bash
+$ go install github.com/TibebeJs/go-alive@latest
 ```
 
 If you are using an older version of golang,
 ```console
-foo@bar:~$ GO111MODULE=on go get github.com/TibebeJs/go-alive@latest
+$ GO111MODULE=on go get github.com/TibebeJs/go-alive@latest
 ```
 ## Using Docker ##
 
@@ -25,30 +25,30 @@ foo@bar:~$ GO111MODULE=on go get github.com/TibebeJs/go-alive@latest
 Clone the source code repository first:
 
 ```console
-foo@bar:~$ git@github.com:TibebeJS/go-alive.git && cd go-alive
+$ git@github.com:TibebeJS/go-alive.git && cd go-alive
 ```
 
 Then build the Docker Image (with [Docker BuildKit](https://docs.docker.com/develop/develop-images/build_enhancements/#to-enable-buildkit-builds) enabled):
 
 ```console
-foo@bar:~$ DOCKER_BUILDKIT=1 docker build . -t go-alive
+$ DOCKER_BUILDKIT=1 docker build . -t go-alive
 ```
 
 Finally mount a folder where your `config.yml` file resides at as `/config` and run the image:
 ```console
-foo@bar:~$ docker run -v $(pwd):/config go-alive
+$ docker run -v $(pwd):/config go-alive
 ```
 
 ### Alternative 2: Pull the image from the Docker Hub Registry and run it
 To pull the docker image:
 
 ```console
-foo@bar:~$ docker pull tibebesjs/go-alive
+$ docker pull tibebesjs/go-alive
 ```
 
 Then simplyy mount a folder where you have your `config.yml` in as `/config` and run the image:
 ```console
-foo@bar:~$ docker run -v $(pwd):/config go-alive
+$ docker run -v $(pwd):/config go-alive
 ```
 
 ## Configuration ##
