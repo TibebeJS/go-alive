@@ -12,13 +12,14 @@ import (
 type HttpStatusStrategy struct{}
 
 func (p HttpStatusStrategy) Run(configuration c.TargetConfigurations) HealthCheckResult {
-	healthCheckResult := HealthCheckResult{NumberOfUnreachableServices: 0, Host: configuration.Ip, Results: []SpecificPortHealthCheckResult{}}
+	healthCheckResult := HealthCheckResult{NumberOfUnreachableServices: 0, Host: configuration.Ip, Strategy: "http-response-status", Results: []SpecificPortHealthCheckResult{}}
 
 	for _, portConfig := range configuration.Ports {
 		portScanResult := SpecificPortHealthCheckResult{
 			Host: configuration.Ip,
 			Port: portConfig.Port, IsReachable: false,
-			Error: nil,
+			Error:    nil,
+			Strategy: "http-response-status",
 		}
 
 		protocol := "https"
