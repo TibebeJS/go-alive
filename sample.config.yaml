@@ -1,46 +1,91 @@
 targets:
   - name: "Test Server"
     ip: "127.0.0.1"
-    cron: "* * * * *"
-    strategy: ping
+    cron: "*/5 * * * *"
+    strategy: status-code
+    https: false
     ports:
       - port: 8000
         notify:
           - via: telegram
-            chat: tibebe
-            from: bot
-            errorTemplate: ""
-            successTemplate: ""
-          - via: email
-            email: tibebe@gmail.com
-            from: bot
-            errorTemplate: ""
-            successTemplate: ""
-    errorTemplate: ""
-    successTemplate: ""
+            chat: go-alive-test-group
+            from: go-alive-test-bot
+            template: ""
+      - port: 8010
+        notify:
     rules:
-      - failures: ">3"
+      - failures: ">0"
         notify:
         - via: telegram
+          chat: go-alive-test-group
+          from: go-alive-test-bot
+          template: >
+            IP: {{.Host}}
+
+            Scan Type: {{.Strategy}}
+
+
+            Scan summary:
+            {{range .Results}}
+              port: {{.Port}}
+              reachable: {{.IsReachable}}
+                ------------{{end}}
+        - via: telegram
           chat: tibebe
-          from: bot
-          errorTemplate: ""
-          successTemplate: ""
+          from: go-alive-test-bot
+          template: >
+            IP: {{.Host}}
+
+            Scan Type: {{.Strategy}}
+
+            Scan summary:
+            {{range .Results}}
+              port: {{.Port}}
+              reachable: {{.IsReachable}}
+              {{ if .Error }}
+                error:
+                  {{ .Error }}
+              {{end}}
+                ------------
+            {{end}}
         - via: email
-          email: tibebe@gmail.com
-          from: bot
-          errorTemplate: ""
-          successTemplate: ""
+          from: "tibebe"
+          to: test@gmail.com
+          subject: "Go-Alive Test Report"
+          template: >
+            IP: {{.Host}}
+
+            Scan Type: {{.Strategy}}
+
+            Scan summary:
+            {{range .Results}}
+              port: {{.Port}}
+              reachable: {{.IsReachable}}
+              {{ if .Error }}
+                error:
+                  {{ .Error }}
+              {{end}}
+                ------------
+            {{end}}
 notifications:
   telegram:
     bots:
-      - name: "bot"
-        token: "123456:bottoken"
+      - name: "go-alive-test-bot"
+        token: "123456:bot-token"
     chats:
+      - name: "go-alive-test-group"
+        chatid: 1123232322
       - name: "tibebe"
-        chatid: -123456789
+        chatid: 12345678
+  email:
+    smtp:
       - name: "tibebe"
-        chatid: -123456789
+        sender: "test@gmail.com"
+        auth:
+          username: "test@gmail.com"
+          password: "password"
+        server: "smtp.gmail.com"
+        port: 587
   webhook:
     - name: "webhook api"
       endpoint: "http://localhost:8000"
