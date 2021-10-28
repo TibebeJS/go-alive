@@ -51,6 +51,85 @@ Then simplyy mount a folder where you have your `config.yml` in as `/config` and
 $ docker run -v $(pwd):/config go-alive
 ```
 
+## Configuration ##
+
+Every operational aspects of go-alive is configured through the yaml file.
+
+```
+targets:                                                            # list of services to scan
+  - name: "Test Server"  
+    ip: "127.0.0.1"
+    cron: "*/5 * * * *"                                             # scan every 5 seconds
+    strategy: status-code                                           # can be "ping", "telnet" or "status-code"
+    https: false
+    ports:                                                          # list of ports to scan for the specified host
+      - port: 8000
+        notify:                                                     # notification channels for the result of the specific port scan
+          - via: telegram
+            chat: go-alive-test-group
+            from: go-alive-test-bot                                 # defined in the notifications block
+            template: ""
+      - port: 8010
+        notify:
+    rules:                                                          # conditional rules to check on host scan result
+      - failures: ">0"                                              # can be "<num", "num", ">num". eg. <4 (less than 4 failures)
+        notify:
+        - via: telegram
+          chat: go-alive-test-group
+          from: go-alive-test-bot
+          template: >                                               # template for telegram message (go template is supported)
+            IP: {{.Host}}
+            Scan Type: {{.Strategy}}
+            Scan summary:
+            {{range .Results}}
+              port: {{.Port}}
+              reachable: {{.IsReachable}}
+                ------------{{end}}
+        - via: email
+          from: "tibebe"
+          to: test@gmail.com
+          subject: "Go-Alive Test Report"
+          template: >
+            IP: {{.Host}}
+            Scan Type: {{.Strategy}}
+            Scan summary:
+            {{range .Results}}
+              port: {{.Port}}
+              reachable: {{.IsReachable}}
+              {{ if .Error }}
+                error:
+                  {{ .Error }}
+              {{end}}
+                ------------
+            {{end}}
+notifications:
+  telegram:
+    bots:
+      - name: "go-alive-test-bot"
+        token: "123456:bot-token"
+    chats:
+      - name: "go-alive-test-group"
+        chatid: 1123232322
+      - name: "tibebe"
+        chatid: 12345678
+  email:
+    smtp:
+      - name: "tibebe"
+        sender: "test@gmail.com"
+        auth:
+          username: "test@gmail.com"
+          password: "password"
+        server: "smtp.gmail.com"
+        port: 587
+  webhook:
+    - name: "webhook api"
+      endpoint: "http://localhost:8000"
+      auth:
+        endpoint: "http://localhost:7000"
+        email: "test@gmail.com"
+        password: "password"
+```
+
 ## Bugs ##
 
 Bugs or suggestions? Visit the [issue tracker](https://github.com/TibebeJS/go-alive/issues) 
