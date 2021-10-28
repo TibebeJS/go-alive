@@ -1,4 +1,4 @@
-FROM golang:1.16.2 AS builder
+FROM golang:1.16.2-alpine AS builder
 ADD . /src
 WORKDIR /src
 RUN --mount=type=cache,mode=0755,target=/go/pkg/mod go get -d -v
