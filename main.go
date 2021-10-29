@@ -77,6 +77,22 @@ func RunHealthCheck(targetConfig c.TargetConfigurations, notificationConfigs c.N
 					notifier.NotifySpecificPortHealthCheckResult(healthCheckResult.Results[i], telegramNotificationConfig.Template)
 					// fmt.Println("telegram notification", telegramNotificationConfig.)
 
+				case "slack":
+					var slackNotificationConfig c.SlackNotificationConfig
+					mapstructure.Decode(notificationReceiver, &slackNotificationConfig)
+					app, ok := notificationConfigs.Slack.SlackAppsMap[slackNotificationConfig.From]
+					if !ok {
+						fmt.Println("Error: Slack App not found in config.", slackNotificationConfig.From)
+					}
+					channel, ok := notificationConfigs.Slack.SlackChannelsMap[slackNotificationConfig.Channel]
+					if !ok {
+						fmt.Println("Error: Slack Channel not found in config.", slackNotificationConfig.Channel)
+					}
+
+					notifier := n.NewSlackNotifier(app, channel)
+					notifier.NotifySpecificPortHealthCheckResult(healthCheckResult.Results[i], slackNotificationConfig.Template)
+					// fmt.Println("telegram notification", telegramNotificationConfig.)
+
 				case "email":
 					var emailNotificationConfig c.EmailNotificationConfig
 					mapstructure.Decode(notificationReceiver, &emailNotificationConfig)
@@ -152,6 +168,21 @@ func RunHealthCheck(targetConfig c.TargetConfigurations, notificationConfigs c.N
 						notifier := n.NewTelegramNotifier(bot, chat)
 						notifier.NotifyHealthCheckResult(healthCheckResult, telegramNotificationConfig.Template)
 						// fmt.Println("telegram notification", telegramNotificationConfig.)
+					case "slack":
+						var slackNotificationConfig c.SlackNotificationConfig
+						mapstructure.Decode(notificationReceiver, &slackNotificationConfig)
+						app, ok := notificationConfigs.Slack.SlackAppsMap[slackNotificationConfig.From]
+						if !ok {
+							fmt.Println("Error: Slack App not found in config.", slackNotificationConfig.From)
+						}
+						channel, ok := notificationConfigs.Slack.SlackChannelsMap[slackNotificationConfig.Channel]
+						if !ok {
+							fmt.Println("Error: Slack Channel not found in config.", slackNotificationConfig.Channel)
+						}
+
+						notifier := n.NewSlackNotifier(app, channel)
+						notifier.NotifyHealthCheckResult(healthCheckResult, slackNotificationConfig.Template)
+						// fmt.Println("telegram notification", telegramNotificationConfig.)
 
 					case "email":
 						var emailNotificationConfig c.EmailNotificationConfig
@@ -200,6 +231,14 @@ func main() {
 
 			configuration.Notifications.Telegram.TelegramBotsMap = botsMap
 
+			chatsMap := make(map[string]c.TelegramChatConfiguration)
+
+			for _, v := range configuration.Notifications.Telegram.Chats {
+				chatsMap[v.Name] = v
+			}
+
+			configuration.Notifications.Telegram.TelegramChatsMap = chatsMap
+
 			smtpMap := make(map[string]c.SmtpConfiguration)
 
 			for _, v := range configuration.Notifications.Email.Smtp {
@@ -208,13 +247,21 @@ func main() {
 
 			configuration.Notifications.Email.SmtpConfigsMap = smtpMap
 
-			chatsMap := make(map[string]c.TelegramChatConfiguration)
+			slackAppsMap := make(map[string]c.SlackAppConfiguration)
 
-			for _, v := range configuration.Notifications.Telegram.Chats {
-				chatsMap[v.Name] = v
+			for _, v := range configuration.Notifications.Slack.Apps {
+				slackAppsMap[v.Name] = v
 			}
 
-			configuration.Notifications.Telegram.TelegramChatsMap = chatsMap
+			configuration.Notifications.Slack.SlackAppsMap = slackAppsMap
+
+			slackChannelsMap := make(map[string]c.SlackChannelConfiguration)
+
+			for _, v := range configuration.Notifications.Slack.Channels {
+				slackChannelsMap[v.Name] = v
+			}
+
+			configuration.Notifications.Slack.SlackChannelsMap = slackChannelsMap
 
 			if len(configuration.Targets) == 0 {
 				fmt.Println("No targets specified. Nothing to do.")
