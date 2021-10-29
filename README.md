@@ -1,6 +1,6 @@
 [![Go Reference](https://pkg.go.dev/badge/github.com/TibebeJs/go-alive.svg)](https://pkg.go.dev/github.com/TibebeJs/go-alive) [![codecov](https://codecov.io/gh/TibebeJS/go-alive/branch/main/graph/badge.svg?token=k3AHKhTtqO)](https://codecov.io/gh/TibebeJS/go-alive) ![Go Report Card](https://goreportcard.com/badge/github.com/tibebejs/go-alive)
 
-Robust services healthiness probing written in Go. (with notification support of webhook, telegram and more)
+Robust services healthiness probing written in Go. (with notification support of telegram, slack, email and more)
 
 > :warning: WARNING: Under heavy construction. API may have breaking changes frequently.
 
@@ -102,6 +102,19 @@ targets:                                          # list of services to scan
               {{end}}
                 ------------
             {{end}}
+        - via: slack
+          channel: go-alive-test-group
+          from: go-alive-test-bot
+          template: >
+            IP: {{.Host}}
+
+            Scan Type: {{.Strategy}}
+
+            Scan summary:
+            {{range .Results}}
+              port: {{.Port}}
+              reachable: {{.IsReachable}}
+                ------------{{end}}
 notifications:                                      # notification channels configurations
   telegram:
     bots:                                           # telegram bots to send messages from
@@ -112,6 +125,13 @@ notifications:                                      # notification channels conf
         chatid: 1123232322
       - name: "tibebe"
         chatid: 12345678
+  slack:
+    apps:
+      - name: "go-alive-test-bot"
+        token: "bot user token"
+    channels:
+      - name: "go-alive-test-group"
+        channelid: 'channel id'
   email:                                            # email configuration
     smtp:
       - name: "tibebe"

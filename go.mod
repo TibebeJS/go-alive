@@ -10,6 +10,7 @@ require (
 	github.com/mtojek/go-telnet v0.0.0-20151012195841-613063f37bf7
 	github.com/mtojek/localserver v0.0.0-20150924184226-6c20f5bb2792 // indirect
 	github.com/robfig/cron v1.2.0
+	github.com/slack-go/slack v0.9.5
 	github.com/spf13/cobra v1.2.1
 	github.com/spf13/viper v1.9.0
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect

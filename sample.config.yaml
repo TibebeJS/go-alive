@@ -31,7 +31,21 @@ targets:
               reachable: {{.IsReachable}}
                 ------------{{end}}
         - via: telegram
-          chat: tibebe
+          chat: go-alive-test-group
+          from: go-alive-test-bot
+          template: >
+            IP: {{.Host}}
+
+            Scan Type: {{.Strategy}}
+
+
+            Scan summary:
+            {{range .Results}}
+              port: {{.Port}}
+              reachable: {{.IsReachable}}
+                ------------{{end}}
+        - via: slack
+          channel: go-alive-test-group
           from: go-alive-test-bot
           template: >
             IP: {{.Host}}
@@ -86,6 +100,13 @@ notifications:
           password: "password"
         server: "smtp.gmail.com"
         port: 587
+  slack:
+    apps:
+      - name: "go-alive-test-bot"
+        token: "bot user token"
+    channels:
+      - name: "go-alive-test-group"
+        channelid: 'channel id'
   webhook:
     - name: "webhook api"
       endpoint: "http://localhost:8000"
