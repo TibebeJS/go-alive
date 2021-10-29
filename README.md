@@ -36,7 +36,7 @@ $ DOCKER_BUILDKIT=1 docker build . -t go-alive
 
 Finally mount a folder where your `config.yml` file resides at as `/config` and run the image:
 ```console
-$ docker run -v $(pwd):/config go-alive
+$ docker run -v $(pwd):/config go-alive         # assuming config.yml is in the current working directory
 ```
 
 ### Alternative 2: Pull the image from the Docker Hub Registry and run it
