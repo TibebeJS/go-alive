@@ -31,8 +31,10 @@ func (c *CommandLine) Timeout() time.Duration {
 	return c.timeout
 }
 
+// TelnetStrategy - Telnet Strategy
 type TelnetStrategy struct{}
 
+// Run - Function to execute the telnet scan strategy
 func (t TelnetStrategy) Run(configuration c.TargetConfigurations) HealthCheckResult {
 	healthCheckResult := HealthCheckResult{NumberOfUnreachableServices: 0, Host: configuration.Ip, Results: []SpecificPortHealthCheckResult{}}
 

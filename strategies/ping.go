@@ -8,8 +8,10 @@ import (
 	"github.com/go-ping/ping"
 )
 
+// PingStrategy - ICMP Ping Strategy
 type PingStrategy struct{}
 
+// Run - Function to execute the icmp ping strategy
 func (p PingStrategy) Run(configuration c.TargetConfigurations) HealthCheckResult {
 	healthCheckResult := HealthCheckResult{NumberOfUnreachableServices: 0, Host: configuration.Ip, Results: []SpecificPortHealthCheckResult{}}
 
@@ -30,10 +32,14 @@ func (p PingStrategy) Run(configuration c.TargetConfigurations) HealthCheckResul
 			healthCheckResult.NumberOfUnreachableServices += 1
 		}
 		iping.SetPrivileged(true)
-		iping.Run()
-		stats := iping.Statistics()
-		if stats.PacketLoss < 100 {
-			portScanResult.IsReachable = true
+		err = iping.Run()
+		if err != nil {
+			portScanResult.IsReachable = false
+		} else {
+			stats := iping.Statistics()
+			if stats.PacketLoss < 100 {
+				portScanResult.IsReachable = true
+			}
 		}
 		healthCheckResult.Results = append(healthCheckResult.Results, portScanResult)
 	}

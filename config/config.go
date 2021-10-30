@@ -5,11 +5,13 @@ import (
 	"github.com/spf13/viper"
 )
 
+// Configurations - struct
 type Configurations struct {
 	Targets       []TargetConfigurations
 	Notifications NotificationConfigurations
 }
 
+// TargetConfigurations - Each Target configuration
 type TargetConfigurations struct {
 	Name     string
 	Ip       string
@@ -20,53 +22,65 @@ type TargetConfigurations struct {
 	Rules    []RuleConfiguration
 }
 
+// RuleConfiguration - Rule configuration
 type RuleConfiguration struct {
 	Failures string
 	Notify   []interface{}
 }
 
+// PortConfigurations - Port configuration
 type PortConfigurations struct {
 	Port   uint64
 	Notify []interface{}
 }
 
+// TelegramConfigurations - Telegram configuration
 type TelegramConfigurations struct {
 	Bots             []TelegramBotConfiguration
 	Chats            []TelegramChatConfiguration
 	TelegramBotsMap  map[string]TelegramBotConfiguration
 	TelegramChatsMap map[string]TelegramChatConfiguration
 }
+
+// TelegramBotConfiguration - Telegram Bot configuration
 type TelegramBotConfiguration struct {
 	Name  string
 	Token string
 }
 
+// TelegramChatConfiguration - Telegram Chat configuration
 type TelegramChatConfiguration struct {
 	Name   string
 	ChatId int64
 }
 
+// SlackConfigurations - Slack configuration
 type SlackConfigurations struct {
 	Apps             []SlackAppConfiguration
 	Channels         []SlackChannelConfiguration
 	SlackAppsMap     map[string]SlackAppConfiguration
 	SlackChannelsMap map[string]SlackChannelConfiguration
 }
+
+// SlackAppConfiguration - Slack App configuration
 type SlackAppConfiguration struct {
 	Name  string
 	Token string
 }
 
+// SlackChannelConfiguration - Slack Channel configuration
 type SlackChannelConfiguration struct {
 	Name      string
 	ChannelId string
 }
 
+// EmailConfig - Email configuration
 type EmailConfig struct {
 	SmtpConfigsMap map[string]SmtpConfiguration
 	Smtp           []SmtpConfiguration
 }
 
+// SmtpConfiguration - Smtp configuration
 type SmtpConfiguration struct {
 	Name   string
 	Sender string
@@ -75,16 +89,19 @@ type SmtpConfiguration struct {
 	Port   uint64
 }
 
+// SmtpAuthConfiguration - Smtp authentication configuration
 type SmtpAuthConfiguration struct {
 	Username string
 	Password string
 }
 
+// EmailRecipientConfiguration - Smtp email recipient configuration
 type EmailRecipientConfiguration struct {
 	To      string
 	Subject string
 }
 
+// NotificationConfigurations - Notification configuration
 type NotificationConfigurations struct {
 	Telegram TelegramConfigurations
 	Slack    SlackConfigurations
@@ -92,12 +109,14 @@ type NotificationConfigurations struct {
 	Email    EmailConfig
 }
 
+// WebHookConfigurations - Webhook configuration
 type WebHookConfigurations struct {
 	Endpoint string
 	Name     string
 	Auth     WebHookAuthConfigurations
 }
 
+// WebHookAuthConfigurations - Webhook authentication configuration
 type WebHookAuthConfigurations struct {
 	Endpoint string
 	Email    string
@@ -105,6 +124,7 @@ type WebHookAuthConfigurations struct {
 	Field    string
 }
 
+// TelegramNotificationConfig - Telegram notification configuration
 type TelegramNotificationConfig struct {
 	Via      string
 	Chat     string
@@ -112,6 +132,7 @@ type TelegramNotificationConfig struct {
 	Template string
 }
 
+// SlackNotificationConfig - Slack notification configuration
 type SlackNotificationConfig struct {
 	Via      string
 	Channel  string
@@ -119,6 +140,7 @@ type SlackNotificationConfig struct {
 	Template string
 }
 
+// EmailNotificationConfig - Email notfication configuration
 type EmailNotificationConfig struct {
 	Via      string
 	To       string
@@ -127,8 +149,10 @@ type EmailNotificationConfig struct {
 	Subject  string
 }
 
+// NotificationStrategyConfig - Struct to choose notification strategy with
 type NotificationStrategyConfig struct{ Via string }
 
+// LoadConfig - Function to load configuration
 func LoadConfig(configPath string) Configurations {
 	viper.SetConfigName(configPath)
 
