@@ -62,7 +62,9 @@ Is Reachable: {{.IsReachable}}
 		slack.MsgOptionAttachments(attachment),
 	)
 
-	utils.Check(err)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -99,7 +101,9 @@ Number Of Scanned Ports Down: {{.NumberOfUnreachableServices}}
 		slack.MsgOptionAttachments(attachment),
 	)
 
-	utils.Check(err)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

@@ -32,10 +32,14 @@ func (p PingStrategy) Run(configuration c.TargetConfigurations) HealthCheckResul
 			healthCheckResult.NumberOfUnreachableServices += 1
 		}
 		iping.SetPrivileged(true)
-		iping.Run()
-		stats := iping.Statistics()
-		if stats.PacketLoss < 100 {
-			portScanResult.IsReachable = true
+		err = iping.Run()
+		if err != nil {
+			portScanResult.IsReachable = false
+		} else {
+			stats := iping.Statistics()
+			if stats.PacketLoss < 100 {
+				portScanResult.IsReachable = true
+			}
 		}
 		healthCheckResult.Results = append(healthCheckResult.Results, portScanResult)
 	}

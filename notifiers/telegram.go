@@ -59,8 +59,11 @@ Is Reachable: {{.IsReachable}}
 		panic(err)
 	}
 
-	bot.Send(tgbotapi.NewMessage(t.chatConfig.ChatId, tpl.String()))
+	_, err = bot.Send(tgbotapi.NewMessage(t.chatConfig.ChatId, tpl.String()))
 
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -91,6 +94,10 @@ Number Of Scanned Ports Down: {{.NumberOfUnreachableServices}}
 	err = tmpl.Execute(&tpl, result)
 	utils.Check(err)
 
-	bot.Send(tgbotapi.NewMessage(t.chatConfig.ChatId, tpl.String()))
+	_, err = bot.Send(tgbotapi.NewMessage(t.chatConfig.ChatId, tpl.String()))
+
+	if err != nil {
+		return err
+	}
 	return nil
 }
