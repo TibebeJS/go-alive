@@ -8,8 +8,10 @@ import (
 	"github.com/go-ping/ping"
 )
 
+// PingStrategy - ICMP Ping Strategy
 type PingStrategy struct{}
 
+// Run - Function to execute the icmp ping strategy
 func (p PingStrategy) Run(configuration c.TargetConfigurations) HealthCheckResult {
 	healthCheckResult := HealthCheckResult{NumberOfUnreachableServices: 0, Host: configuration.Ip, Results: []SpecificPortHealthCheckResult{}}
 

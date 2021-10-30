@@ -9,8 +9,10 @@ import (
 	c "github.com/TibebeJS/go-alive/config"
 )
 
+// HttpStatusStrategy - Http Statuscode Strategy
 type HttpStatusStrategy struct{}
 
+// Run - Function to execute the Http Statuscode check strategy
 func (p HttpStatusStrategy) Run(configuration c.TargetConfigurations) HealthCheckResult {
 	healthCheckResult := HealthCheckResult{NumberOfUnreachableServices: 0, Host: configuration.Ip, Strategy: "http-response-status", Results: []SpecificPortHealthCheckResult{}}
 

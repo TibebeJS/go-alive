@@ -11,11 +11,13 @@ import (
 	"github.com/slack-go/slack"
 )
 
+// SlackNotifier - Slack Notifier constructor
 type SlackNotifier struct {
 	botConfig  c.SlackAppConfiguration
 	chatConfig c.SlackChannelConfiguration
 }
 
+// NewSlackNotifier - Slack Notifier constructor
 func NewSlackNotifier(botConfig c.SlackAppConfiguration, chatConfig c.SlackChannelConfiguration) *SlackNotifier {
 	return &SlackNotifier{
 		botConfig:  botConfig,
@@ -23,6 +25,7 @@ func NewSlackNotifier(botConfig c.SlackAppConfiguration, chatConfig c.SlackChann
 	}
 }
 
+// NotifySpecificPortHealthCheckResult - Sends slack message for each specific port scan
 func (t *SlackNotifier) NotifySpecificPortHealthCheckResult(result s.SpecificPortHealthCheckResult, templateString string) error {
 
 	fmt.Println("sending specific slack message")
@@ -64,6 +67,7 @@ Is Reachable: {{.IsReachable}}
 	return nil
 }
 
+// NotifyHealthCheckResult - Sends slack message of target scan result
 func (t *SlackNotifier) NotifyHealthCheckResult(result s.HealthCheckResult, templateString string) error {
 	fmt.Println("sending total slack message")
 

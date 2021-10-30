@@ -12,11 +12,13 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
+// TelegramNotifier - Telegram Notifier
 type TelegramNotifier struct {
 	botConfig  c.TelegramBotConfiguration
 	chatConfig c.TelegramChatConfiguration
 }
 
+// NewTelegramNotifier - Telegram Notifier constructor
 func NewTelegramNotifier(botConfig c.TelegramBotConfiguration, chatConfig c.TelegramChatConfiguration) *TelegramNotifier {
 	return &TelegramNotifier{
 		botConfig:  botConfig,
@@ -24,6 +26,7 @@ func NewTelegramNotifier(botConfig c.TelegramBotConfiguration, chatConfig c.Tele
 	}
 }
 
+// NotifySpecificPortHealthCheckResult - Sends telegram message for each specific port scan
 func (t *TelegramNotifier) NotifySpecificPortHealthCheckResult(result s.SpecificPortHealthCheckResult, templateString string) error {
 	fmt.Println("sending message with bot token", t.botConfig.Token)
 
@@ -61,6 +64,7 @@ Is Reachable: {{.IsReachable}}
 	return nil
 }
 
+// NotifyHealthCheckResult - Sends telegrams message of target scan result
 func (t *TelegramNotifier) NotifyHealthCheckResult(result s.HealthCheckResult, templateString string) error {
 	fmt.Println("sending message with bot token", t.botConfig.Token)
 

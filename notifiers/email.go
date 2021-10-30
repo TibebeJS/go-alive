@@ -11,11 +11,13 @@ import (
 	"github.com/TibebeJS/go-alive/utils"
 )
 
+// EmailNotifier - Email Notifier
 type EmailNotifier struct {
 	smtpConfig      c.SmtpConfiguration
 	recipientConfig c.EmailRecipientConfiguration
 }
 
+// NewEmailNotifier - Email Notifier constructor
 func NewEmailNotifier(smtpConfig c.SmtpConfiguration, recipientConfig c.EmailRecipientConfiguration) *EmailNotifier {
 	return &EmailNotifier{
 		smtpConfig:      smtpConfig,
@@ -23,6 +25,7 @@ func NewEmailNotifier(smtpConfig c.SmtpConfiguration, recipientConfig c.EmailRec
 	}
 }
 
+// NotifySpecificPortHealthCheckResult - Sends email for each specific port scan
 func (t *EmailNotifier) NotifySpecificPortHealthCheckResult(result s.SpecificPortHealthCheckResult, templateString string) error {
 	fmt.Println("sending an email from", t.smtpConfig.Sender, "to", t.recipientConfig.To)
 
@@ -65,6 +68,7 @@ Is Reachable: {{.IsReachable}}
 	return nil
 }
 
+// NotifyHealthCheckResult - Sends email of target scan result
 func (t *EmailNotifier) NotifyHealthCheckResult(result s.HealthCheckResult, templateString string) error {
 	fmt.Println("sending an email from", t.smtpConfig.Sender, "to", t.recipientConfig.To)
 
