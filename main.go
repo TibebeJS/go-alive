@@ -28,7 +28,7 @@ type HealthCheckStrategyChooser struct{}
 func (runner *HealthCheckStrategyChooser) Parse(configuration c.TargetConfigurations) (s.Strategy, error) {
 
 	var portConfigurationsStrategyCheck portConfigurationsStrategyCheck
-	mapstructure.Decode(configuration, &portConfigurationsStrategyCheck)
+	utils.Check(mapstructure.Decode(configuration, &portConfigurationsStrategyCheck))
 
 	switch portConfigurationsStrategyCheck.Strategy {
 	case "ping":
