@@ -2,8 +2,6 @@
 
 Robust services healthiness probing written in Go. (with notification support of telegram, slack, email and more)
 
-> :warning: WARNING: Under heavy construction. API may have breaking changes frequently.
-
 ## Getting Started ##
 
 Please follow the steps below to get started quick
