@@ -12,6 +12,6 @@ require (
 	github.com/robfig/cron v1.2.0
 	github.com/slack-go/slack v0.10.0
 	github.com/spf13/cobra v1.2.1
-	github.com/spf13/viper v1.9.0
+	github.com/spf13/viper v1.10.0
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
 )
